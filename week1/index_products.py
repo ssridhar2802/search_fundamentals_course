@@ -60,7 +60,17 @@ def get_opensearch():
     auth = ('admin', 'admin')
 
     #### Step 2.a: Create a connection to OpenSearch
-    client = None
+    client = client = OpenSearch(
+        hosts=[{'host': host, 'port': port}],
+        http_compress=True,  # enables gzip compression for request bodies
+        http_auth=auth,
+        # client_cert = client_cert_path,
+        # client_key = client_key_path,
+        use_ssl=True,
+        verify_certs=False,
+        ssl_assert_hostname=False,
+        ssl_show_warn=False,
+    )
     return client
 
 
@@ -71,6 +81,7 @@ def main(source_dir: str, index_name: str):
     client = get_opensearch()
     # To test on a smaller set of documents, change this glob to be more restrictive than *.xml
     files = glob.glob(source_dir + "/*.xml")
+    ## added new
     docs_indexed = 0
     tic = time.perf_counter()
     for file in files:
@@ -79,6 +90,7 @@ def main(source_dir: str, index_name: str):
         root = tree.getroot()
         children = root.findall("./product")
         docs = []
+        counter = 0
         for child in children:
             doc = {}
             for idx in range(0, len(mappings), 2):
@@ -90,8 +102,16 @@ def main(source_dir: str, index_name: str):
                 continue
 
             #### Step 2.b: Create a valid OpenSearch Doc and bulk index 2000 docs at a time
-            the_doc = None
+            the_doc = {'_index': index_name , '_source': doc}
+            # the_doc = None
             docs.append(the_doc)
+            counter += 1
+            if counter == 2000:
+                # print(docs)
+                bulk(client, docs, request_timeout=60)
+                docs = []
+                counter = 0
+                docs_indexed += 1
     toc = time.perf_counter()
     logger.info(f'Done. Total docs: {docs_indexed}.  Total time: {((toc - tic) / 60):0.3f} mins.')
 
