@@ -8,7 +8,7 @@ usage()
 PRODUCTS_JSON_FILE="/workspace/search_fundamentals_course/opensearch/bbuy_products.json"
 QUERIES_JSON_FILE="/workspace/search_fundamentals_course/opensearch/bbuy_queries.json"
 DATASETS_DIR="/workspace/datasets"
-PYTHON_LOC="/workspace/search_fundamentals_course/week1"
+PYTHON_LOC="/workspace/search_fundamentals_course/week2"
 
 LOGS_DIR="/workspace/logs"
 
