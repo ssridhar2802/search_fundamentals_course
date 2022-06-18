@@ -195,7 +195,7 @@ def add_click_priors(query_obj, user_query, priors_gb):
         print(priors_gb)
         if prior_clicks_for_query is not None and len(prior_clicks_for_query) > 0:
             normalized_priors = prior_clicks_for_query.sku.value_counts(normalize=True).reset_index()
-            normalized_priors['boost'] = normalized_priors['index'].astype(str)+'^'+(1+normalized_priors['sku']).astype(str)
+            normalized_priors['boost'] = normalized_priors['index'].astype(str)+'^'+(normalized_priors['sku']).astype(str)
             click_prior = " ".join(normalized_priors['boost'].values)
             #### W2, L1, S1
             # Create a string object of SKUs and weights that will boost documents matching the SKU
